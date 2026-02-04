@@ -1,7 +1,8 @@
 from rich.console import Console
 from rich.theme import Theme
-
-
+from rich.rule import Rule
+from sympy import content
+from rich.text import Text
 AGENT_THEME = Theme(
     {
         # General
@@ -45,21 +46,14 @@ def get_console()-> Console :
 class TUI:
     def __init__(self , console : Console | None = None):
         self.console = console or get_console()
-        
+        self._assistant_stream_open = False
     def stream_response_delta(self, content : str):
         self.console.print(content , end="" ,markup=False)
-    
-    
-    def stream_assistan_delta(self, content : str):
-        self.console.print(f"[assistant]{content}[/assistant]", end="" )
-    def print_info(self, message: str):
-        self.console.print(f"[info]{message}[/info]")
-
-    def print_warning(self, message: str):
-        self.console.print(f"[warning]{message}[/warning]")
-
-    def print_error(self, message: str):
-        self.console.print(f"[error]{message}[/error]")
-
-    def print_success(self, message: str):
-        self.console.print(f"[success]{message}[/success]")
+        
+    def begin_assistant(self) -> None :  
+        self.console.print(Rule(Text("Assistant Response", style="assistant")))
+        self._assistant_stream_open = True
+    def end_assistant(self) -> None :
+        if self._assistant_stream_open:
+            self.console.print(Rule(style="assistant"))
+            self._assistant_stream_open = False
