@@ -13,7 +13,7 @@ class TextDelta:
     
     
 @dataclass
-class EventType(str, Enum):
+class StreamEventType(str, Enum):
     TEXT_DELTA = "text_delta"
     MESSAGE_COMPLETE = "message_complete"
     ERROR = "error"
@@ -26,7 +26,7 @@ class TokenUsage:
     cached_tokens : int = 0
     
     
-    def __add__(self , other : 'TokenUsage'):
+    def __add__(self , other : TokenUsage):
         return TokenUsage(
             prompt_tokens=self.prompt_tokens + other.prompt_tokens,
             completion_tokens=self.completion_tokens + other.completion_tokens, 
@@ -37,8 +37,10 @@ class TokenUsage:
 # a.__add__(b)
 @dataclass
 class StreamEvent:
-    event_type: EventType
+    event_type: StreamEventType
     text_delta : TextDelta | None = None
     error : str = ""
     finish_reason : str | None = None
     usage : TokenUsage | None = None
+    
+    

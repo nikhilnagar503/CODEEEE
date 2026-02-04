@@ -2,13 +2,16 @@ from openai import AsyncOpenAI
 from typing import Any, AsyncGenerator
 from dotenv import load_dotenv
 import os
+from openai import RateLimitError, APIConnectionError , APIError
+import asyncio
 
 
-from client.response import TextDelta, TokenUsage , StreamEvent , EventType
+from client.response import TextDelta, TokenUsage , StreamEventType , StreamEvent
 
 class llm_client:
     def __init__(self) -> None:
         self._client: AsyncOpenAI | None = None
+        self._max_retries : int  = 3
         load_dotenv()  # Load environment variables from .env file
     
     def get_client(self) -> AsyncOpenAI:
@@ -30,36 +33,91 @@ class llm_client:
                               stream : bool = True
             
                               )-> AsyncGenerator[StreamEvent , None]:
-        client = self.get_client()
-        kwargs = {
-            "model": os.getenv("MODEL"),
-            "messages": messages,
-            "stream": stream,
-            "temperature": 0.7,
-            "max_tokens": 1000
-        }
         
-        # Debug: Check if env variables are loaded
-        print(f"MODEL: {os.getenv('MODEL')}")
-        print(f"API_KEY: {os.getenv('OPENAI_API_KEY')[:10] if os.getenv('OPENAI_API_KEY') else 'NOT SET'}")
-        print(f"BASE_URL: {os.getenv('BASE_URL')}")
-        
-        if stream:
-            async for event in self._stream_response(client, kwargs):
-                yield event
-        else:
-            event = await self._non_stream_response(client, kwargs)
-            yield event
-        
-        return
+        for attempt in range(self._max_retries+1):
+            try : 
+                client = self.get_client()
+                kwargs = {
+                    "model": os.getenv("MODEL"),
+                    "messages": messages,
+                    "stream": stream,
+                    "temperature": 0.7,
+                    "max_tokens": 1000
+                }
+                
+                if stream:
+                    async for event in self._stream_response(client, kwargs):
+                        yield event
+                else:
+                    event = await self._non_stream_response(client, kwargs)
+                    yield event
+                return
+            
+            
+            except RateLimitError as e :
+                if attempt < self._max_retries:
+                    await asyncio.sleep(2 ** attempt)  # Exponential backoff
+                    continue
+                else:
+                    yield StreamEvent(
+                        event_type=StreamEventType.ERROR,
+                        error = f"Rate limit exceeded: {str(e)} "
+                    )
+                return 
+                    
+            except APIConnectionError as e:
+                if attempt < self._max_retries:
+                    await asyncio.sleep(2 ** attempt)  # Exponential backoff
+                    continue
+                else:
+                    yield StreamEvent(
+                        event_type=StreamEventType.ERROR,
+                        error = f"Connection error: {str(e)} "
+                    )
+                return 
+            except APIError as e:
+                yield StreamEvent(
+                    event_type=StreamEventType.ERROR,
+                    error=f"API error: {e}",
+                )
+                return
     
     
     async def _stream_response(self, client:AsyncOpenAI, kwargs:dict[str, Any]) -> AsyncGenerator[StreamEvent , None]:
         response = await client.chat.completions.create(**kwargs)
+        finish_reason : str | None = None
+        usage : TokenUsage | None = None
         
         async for chunk in response:
-            yield chunk
+            if hasattr(chunk,'usage') and chunk.usage:
+                usage = TokenUsage(
+                    prompt_tokens=chunk.usage.prompt_tokens,
+                    completion_tokens=chunk.usage.completion_tokens,
+                    total_tokens=chunk.usage.total_tokens,
+                    cached_tokens=chunk.usage.prompt_tokens_details.cached_tokens,  # Assuming cached tokens is not provided by OpenAI
+                )
+                
+            if not chunk.choices:
+                continue
+            
+            choice = chunk.choices[0]
+            delta = choice.delta
+            
+            if delta.content:
+                text_delta = TextDelta(content=delta.content)
+                stream_event = StreamEvent(
+                    event_type=StreamEventType.TEXT_DELTA,
+                    text_delta=text_delta,
         
+                )
+                yield stream_event
+                
+            
+        yield StreamEvent(  
+            event_type=StreamEventType.MESSAGE_COMPLETE,
+            finish_reason=choice.finish_reason,
+            usage=usage,
+        )
         
     async def _non_stream_response( self, client: AsyncOpenAI,kwargs : dict[str, Any])   -> StreamEvent :
         
@@ -81,7 +139,7 @@ class llm_client:
                 cached_tokens=response.usage.prompt_tokens_details.cached_tokens,  # Assuming cached tokens is not provided by OpenAI
             )
         return StreamEvent(
-            event_type = EventType.MESSAGE_COMPLETE ,
+            event_type = StreamEventType.MESSAGE_COMPLETE ,
             text_delta = text_delta,
             finish_reason= choice.finish_reason,
             usage = usage,
