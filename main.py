@@ -8,6 +8,9 @@ import sys
 
 console = get_console()
 
+# Global CLI instance to maintain context across commands
+# _cli_instance : CLI | None = None
+
 class CLI:
     def __init__(self):
         self.agent  : Agent  | None = None

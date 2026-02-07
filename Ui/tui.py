@@ -1,7 +1,6 @@
 from rich.console import Console
 from rich.theme import Theme
 from rich.rule import Rule
-from sympy import content
 from rich.text import Text
 AGENT_THEME = Theme(
     {

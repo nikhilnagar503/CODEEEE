@@ -4,25 +4,29 @@ from client.response import StreamEventType
 
 from click import prompt
 
-from agent.events import AgentEvent
+from agent.events import AgentEvent, AgentEventType
 import client
 from client.llm_client import llm_client
+from context.manager import context_manager
         
 
 class Agent :
     def __init__(self):
         self.client = llm_client()
+        self.context_manager = context_manager()
         
     async def  run(self, message:str):
         
-        yield AgentEvent.agent_start(message="Agent started processing the message.")
+        yield AgentEvent.agent_start(message=message)
+        self.context_manager.add_user_message(message)
+        
         #  add the user message for context 
         
         final_response = ""
         async for event in self._agentic_loop():
             yield event 
             
-            if event.type == StreamEventType.MESSAGE_COMPLETE :
+            if event.type == AgentEventType.TEXT_COMPLETE :
                 final_response  = event.data.get("content", "")
         
         yield AgentEvent.agent_end(final_response)
@@ -32,11 +36,11 @@ class Agent :
         
         
     async def  _agentic_loop(self)-> AsyncGenerator[AgentEvent , None ]:
-            
-            messages = [{"role": "user", "content": "Hey what is going on "}]
+
+            messages = self.context_manager.get_messages()
             response_text  = ""
 
-            async for event in self.client.chat_completion(messages,stream=True):
+            async for event in self.client.chat_completion(self.context_manager.get_messages(),stream=True):
                 if event.event_type == StreamEventType.TEXT_DELTA:
                     content=event.text_delta.content if event.text_delta else None
                     
@@ -48,12 +52,13 @@ class Agent :
                     yield AgentEvent.agent_error(error=event.error or "Unknown error Occurred")
             
             
+            
+            self.context_manager.add_Assistant_message(response_text or "")
                     
-                    return
             if response_text :
                 yield AgentEvent.text_complete(content=response_text)
                 
-            await self.client.close()
+            
         
     async def __aenter__(self) -> Agent :
         return self 
