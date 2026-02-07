@@ -22,7 +22,15 @@ class  ToolResult:
     output : str | None = None
     error : str | None = None
     metadata : dict[str,Any]  = field(default_factory=dict)
-    
+
+    @classmethod
+    def error_result (cls , error_msg : str , output: str | None = ""):
+        return cls(
+            success = False,
+            output = output,
+            error = error_msg,
+             
+        )
 @dataclass 
 class ToolInvocation:
     params : dict[str,Any]
