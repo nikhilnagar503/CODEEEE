@@ -29,8 +29,23 @@ class  ToolResult:
             success = False,
             output = output,
             error = error_msg,
+        
              
         )
+        
+    @classmethod
+    def success_result(cls, output: str | None = "", metadata: dict[str,Any] | None = None):
+        return cls(
+            success=True,
+            output=output,
+            error=None,
+            metadata=metadata or {}
+        )
+        
+        
+        
+        
+        
 @dataclass 
 class ToolInvocation:
     params : dict[str,Any]
