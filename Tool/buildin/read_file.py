@@ -1,5 +1,6 @@
 from pydantic import BaseModel , Field
-from Tool.base import Tool, ToolKind
+from Tool.base import Tool, ToolInvocation, ToolKind, ToolResult
+from utils.paths import resolve_path , is_binary_file
 
 
 class ReadFileParams(BaseModel):
@@ -24,7 +25,24 @@ class ReadFileTool(Tool):
                 )
     
     kind = ToolKind.READ
-                   
-                   
-                   
     
+    schema = ReadFileParams
+    
+    MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
+    async def execute(self, invocation: ToolInvocation) -> ToolResult:
+        params = ReadFileParams(**invocation.params)
+        path = resolve_path(invocation.cwd, params.path)
+        
+        
+        if not path.exists():
+            return ToolResult.error_result(f"File not found: {path}")
+        if not path.is_file():
+            return ToolResult.error_result(f"Path is not a file: {path}")
+        
+        file_size = path.stat().st_size
+        
+        if file_size > self.MAX_FILE_SIZE:
+            return ToolResult.error_result(f"File is too large to read (size: {file_size} bytes)")
+        
+        if is_binary_file(path):
+            return ToolResult.error_result("Cannot read binary files")
