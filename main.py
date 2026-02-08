@@ -37,14 +37,20 @@ class CLI:
                 self.tui.stream_response_delta(content)
             elif event.type == AgentEventType.TEXT_COMPLETE :
                 final_response = event.data.get("content","")
-                if assitant_streaming :
-                    self.tui.end_assistant()
-                    assitant_streaming = False
-                    console.print("\n[success]Agent finished processing the message.[/success]")
+                if not assitant_streaming:
+                    self.tui.begin_assistant()
+                    assitant_streaming = True
+                if final_response:
+                    self.tui.stream_response_delta(final_response)
+                self.tui.end_assistant()
+                assitant_streaming = False
+                console.print("\n[success]Agent finished processing the message.[/success]")
             elif event.type == AgentEventType.AGENT_ERROR:
                   error = event.data.get("error","Unknown error occurred.")
-                  if assitant_streaming :
-                      console.print(f"\n[error]{error}[/error]")
+                  if assitant_streaming:
+                      self.tui.end_assistant()
+                      assitant_streaming = False
+                  console.print(f"\n[error]{error}[/error]")
                       
         return final_response
 

@@ -24,22 +24,23 @@ class  ToolResult:
     metadata : dict[str,Any]  = field(default_factory=dict)
 
     @classmethod
-    def error_result (cls , error_msg : str , output: str | None = ""):
+    def error_result (cls , error_msg : str , output: str | None = "" , **kwargs) -> ToolResult:
         return cls(
             success = False,
             output = output,
             error = error_msg,
-        
-             
+            metadata=kwargs or {}
         )
+             
+        
         
     @classmethod
-    def success_result(cls, output: str | None = "", metadata: dict[str,Any] | None = None):
+    def success_result(cls, output: str | None = "", **kwargs):
         return cls(
             success=True,
             output=output,
             error=None,
-            metadata=metadata or {}
+            metadata=kwargs or {}
         )
         
         
@@ -60,12 +61,15 @@ class ToolConfirmation:
     
     
 class Tool(abc.ABC):
-    name : str = "base_tool"
-    description : str = "Base tool "
-    kind : ToolKind = ToolKind.READ
+    name: str = "base_tool"
+    description: str = "Base tool"
+    kind: ToolKind = ToolKind.READ
     
-    def __init__(self, name: str, description: str):
-        pass 
+    def __init__(self, name: str | None = None, description: str | None = None):
+        if name is not None:
+            self.name = name
+        if description is not None:
+            self.description = description
     
     @property
     def schema(self)->dict[str,Any] | type['BaseModel']:
@@ -73,7 +77,7 @@ class Tool(abc.ABC):
     
     
     @abc.abstractmethod
-    async def run(self, invocation)-> ToolResult:
+    async def execute(self, invocation: ToolInvocation) -> ToolResult:
         pass 
     
     def validate_params(self,params : dict[str,Any])-> list[str]:
@@ -83,13 +87,13 @@ class Tool(abc.ABC):
                 
               schema(**params)
             except Exception as e:
-                error = []
-                for err in e.errors():
-                  field =".".join(str(x) for x in error.get("loc",[]))
-                  msg = error.get("msg","validation error")
-                  error.append(f"{field} : {msg}")
-                return error
-            except Exception as e:
+                if hasattr(e, "errors"):
+                    errors: list[str] = []
+                    for err in e.errors():
+                        field = ".".join(str(x) for x in err.get("loc", []))
+                        msg = err.get("msg", "validation error")
+                        errors.append(f"{field}: {msg}")
+                    return errors
                 return [str(e)]
         return []
     

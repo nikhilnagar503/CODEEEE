@@ -42,5 +42,6 @@ class StreamEvent:
     error : str = ""
     finish_reason : str | None = None
     usage : TokenUsage | None = None
+    tool_calls: list[dict[str, Any]] | None = None
     
     

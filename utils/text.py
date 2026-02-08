@@ -1,8 +1,10 @@
 import tiktoken
 
 
-def get_tokenizer(Model : str):
+def get_tokenizer(Model: str | None):
     try :
+         if not Model:
+             raise ValueError("Model is required")
          encoding  = tiktoken.encoding_for_model(Model)
          return encoding.encode 
     except Exception:
@@ -10,7 +12,7 @@ def get_tokenizer(Model : str):
 
         return encoding.encode
     
-def count_tokens(text : str , Model : str) -> int :
+def count_tokens(text: str, Model: str | None = None) -> int:
     tokenizer = get_tokenizer(Model)
     
     if tokenizer :

@@ -27,9 +27,30 @@ class llm_client:
         if self._client:
             await self._client.close()
             self._client = None
-            
+    
+    def _build_tools(self, tools: list[dict[str, Any]]):
+        return [
+            {
+                "type": "function",
+                "function": {
+                    "name": tool["name"],
+                    "description": tool.get("description", ""),
+                    "parameters": tool.get(
+                        "parameters",
+                        {
+                            "type": "object",
+                            "properties": {},
+                        },
+                    ),
+                },
+            }
+            for tool in tools
+        ]
+        
+    
     async def chat_completion(self,
                               messages : list[dict[str, Any]],
+                              tools : list[dict[str, Any]] | None = None,
                               stream : bool = True
             
                               )-> AsyncGenerator[StreamEvent , None]:
@@ -45,6 +66,11 @@ class llm_client:
                     "max_tokens": 1000
                 }
                 
+                if tools:
+                    kwargs["tools"] = self._build_tools(tools)
+                    kwargs["tool_choice"] = "auto"
+                    
+
                 if stream:
                     async for event in self._stream_response(client, kwargs):
                         yield event
@@ -90,11 +116,14 @@ class llm_client:
         
         async for chunk in response:
             if hasattr(chunk,'usage') and chunk.usage:
+                cached = 0
+                if hasattr(chunk.usage, 'prompt_tokens_details') and chunk.usage.prompt_tokens_details:
+                    cached = getattr(chunk.usage.prompt_tokens_details, 'cached_tokens', 0) or 0
                 usage = TokenUsage(
                     prompt_tokens=chunk.usage.prompt_tokens,
                     completion_tokens=chunk.usage.completion_tokens,
                     total_tokens=chunk.usage.total_tokens,
-                    cached_tokens=chunk.usage.prompt_tokens_details.cached_tokens,  # Assuming cached tokens is not provided by OpenAI
+                    cached_tokens=cached,
                 )
                 
             if not chunk.choices:
@@ -126,17 +155,34 @@ class llm_client:
         choice = response.choices[0]    
         message = choice.message
         text_delta = None
+        tool_calls = None
         
         if message.content:
             text_delta = TextDelta(content=message.content)
+        if getattr(message, "tool_calls", None):
+            tool_calls = []
+            for call in message.tool_calls:
+                tool_calls.append(
+                    {
+                        "id": call.id,
+                        "type": call.type,
+                        "function": {
+                            "name": call.function.name,
+                            "arguments": call.function.arguments,
+                        },
+                    }
+                )
         
         usage = None
         if response.usage:
+            cached = 0
+            if hasattr(response.usage, 'prompt_tokens_details') and response.usage.prompt_tokens_details:
+                cached = getattr(response.usage.prompt_tokens_details, 'cached_tokens', 0) or 0
             usage = TokenUsage(
                 prompt_tokens=response.usage.prompt_tokens,
                 completion_tokens=response.usage.completion_tokens,
                 total_tokens=response.usage.total_tokens,
-                cached_tokens=response.usage.prompt_tokens_details.cached_tokens,  # Assuming cached tokens is not provided by OpenAI
+                cached_tokens=cached,
             )
         return StreamEvent(
             event_type = StreamEventType.MESSAGE_COMPLETE ,
@@ -144,6 +190,7 @@ class llm_client:
             finish_reason= choice.finish_reason,
             usage = usage,
             error = "",
+            tool_calls=tool_calls,
             )
         
        
