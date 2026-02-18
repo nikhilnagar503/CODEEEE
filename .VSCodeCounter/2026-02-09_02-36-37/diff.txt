@@ -1,0 +1,51 @@
+Date : 2026-02-09 02:36:37
+Directory : /mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE
+Total : 16 files,  938 codes, 17 comments, 292 blanks, all 1247 lines
+
+Languages
++------------------+------------+------------+------------+------------+------------+
+| language         | files      | code       | comment    | blank      | total      |
++------------------+------------+------------+------------+------------+------------+
+| Python           |         14 |        929 |         17 |        288 |      1,234 |
+| pip requirements |          1 |          5 |          0 |          1 |          6 |
+| Markdown         |          1 |          4 |          0 |          3 |          7 |
++------------------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                        | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                           |         16 |        938 |         17 |        292 |      1,247 |
+| . (Files)                                                                                   |          3 |         77 |          2 |         29 |        108 |
+| Tool                                                                                        |          4 |        270 |          4 |        105 |        379 |
+| Tool (Files)                                                                                |          2 |        182 |          4 |         62 |        248 |
+| Tool/builtin                                                                                |          2 |         88 |          0 |         43 |        131 |
+| agent                                                                                       |          2 |        147 |          3 |         47 |        197 |
+| client                                                                                      |          3 |        197 |          2 |         45 |        244 |
+| context                                                                                     |          1 |         51 |          0 |         14 |         65 |
+| prompts                                                                                     |          1 |        123 |          4 |         24 |        151 |
+| utils                                                                                       |          2 |         73 |          2 |         28 |        103 |
++---------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
+| filename                                                                                    | language         | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
+| /mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/README.md                 | Markdown         |          4 |          0 |          3 |          7 |
+| /mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/Tool/base.py              | Python           |        112 |          0 |         35 |        147 |
+| /mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/Tool/builtin/__init__.py  | Python           |          7 |          0 |          4 |         11 |
+| /mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/Tool/builtin/read_file.py | Python           |         81 |          0 |         39 |        120 |
+| /mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/Tool/registry.py          | Python           |         70 |          4 |         27 |        101 |
+| /mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/agent/agent.py            | Python           |        101 |          1 |         32 |        134 |
+| /mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/agent/events.py           | Python           |         46 |          2 |         15 |         63 |
+| /mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/client/__init__.py        | Python           |          0 |          0 |          1 |          1 |
+| /mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/client/llm_client.py      | Python           |        163 |          0 |         33 |        196 |
+| /mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/client/response.py        | Python           |         34 |          2 |         11 |         47 |
+| /mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/context/manager.py        | Python           |         51 |          0 |         14 |         65 |
+| /mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/main.py                   | Python           |         68 |          2 |         25 |         95 |
+| /mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/prompts/system.py         | Python           |        123 |          4 |         24 |        151 |
+| /mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/requirements.txt          | pip requirements |          5 |          0 |          1 |          6 |
+| /mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/utils/paths.py            | Python           |         16 |          0 |          4 |         20 |
+| /mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/utils/text.py             | Python           |         57 |          2 |         24 |         83 |
+| Total                                                                                       |                  |        938 |         17 |        292 |      1,247 |
++---------------------------------------------------------------------------------------------+------------------+------------+------------+------------+------------+

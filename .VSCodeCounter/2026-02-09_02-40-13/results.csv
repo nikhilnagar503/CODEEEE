@@ -1,0 +1,19 @@
+"filename", "language", "Python", "pip requirements", "Markdown", "comment", "blank", "total"
+"/mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/README.md", "Markdown", 0, 0, 4, 0, 3, 7
+"/mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/Tool/base.py", "Python", 112, 0, 0, 0, 35, 147
+"/mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/Tool/builtin/__init__.py", "Python", 7, 0, 0, 0, 4, 11
+"/mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/Tool/builtin/read_file.py", "Python", 81, 0, 0, 0, 39, 120
+"/mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/Tool/registry.py", "Python", 70, 0, 0, 4, 27, 101
+"/mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/Ui/tui.py", "Python", 45, 0, 0, 4, 9, 58
+"/mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/agent/agent.py", "Python", 101, 0, 0, 1, 32, 134
+"/mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/agent/events.py", "Python", 46, 0, 0, 2, 15, 63
+"/mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/client/__init__.py", "Python", 0, 0, 0, 0, 1, 1
+"/mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/client/llm_client.py", "Python", 163, 0, 0, 12, 34, 209
+"/mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/client/response.py", "Python", 34, 0, 0, 2, 11, 47
+"/mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/context/manager.py", "Python", 51, 0, 0, 0, 14, 65
+"/mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/main.py", "Python", 68, 0, 0, 2, 25, 95
+"/mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/prompts/system.py", "Python", 123, 0, 0, 4, 24, 151
+"/mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/requirements.txt", "pip requirements", 0, 5, 0, 0, 1, 6
+"/mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/utils/paths.py", "Python", 16, 0, 0, 0, 4, 20
+"/mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/utils/text.py", "Python", 57, 0, 0, 2, 24, 83
+"Total", "-", 974, 5, 4, 33, 302, 1318

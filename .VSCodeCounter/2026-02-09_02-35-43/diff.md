@@ -1,0 +1,24 @@
+# Diff Summary
+
+Date : 2026-02-09 02:35:43
+
+Directory /mnt/Windows-SSD/Users/nagar/Desktop/my_project/cloude_AI/CODEEEE/context
+
+Total : 4 files,  -146 codes, -2 comments, -31 blanks, all -179 lines
+
+[Summary](results.md) / [Details](details.md) / Diff Summary / [Diff Details](diff-details.md)
+
+## Languages
+| language | files | code | comment | blank | total |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| Python | 4 | -146 | -2 | -31 | -179 |
+
+## Directories
+| path | files | code | comment | blank | total |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| . | 4 | -146 | -2 | -31 | -179 |
+| . (Files) | 1 | 51 | 0 | 14 | 65 |
+| .. | 3 | -197 | -2 | -45 | -244 |
+| ../client | 3 | -197 | -2 | -45 | -244 |
+
+[Summary](results.md) / [Details](details.md) / Diff Summary / [Diff Details](diff-details.md)
