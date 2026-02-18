@@ -107,7 +107,7 @@ class Config(BaseModel):
 
     @property
     def api_key(self) -> str | None:
-        return os.environ.get("API_KEY")
+        return os.environ.get("API_KEY") or os.environ.get("OPENAI_API_KEY")
 
     @property
     def base_url(self) -> str | None:

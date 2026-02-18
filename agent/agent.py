@@ -110,6 +110,7 @@ class Agent:
                 return
 
             tool_call_results: list[ToolResultMessage] = []
+            raw_tool_results = []
 
             for tool_call in tool_calls:
                 yield AgentEvent.tool_call_start(
@@ -132,6 +133,8 @@ class Agent:
                     self.session.approval_manager,
                 )
 
+                raw_tool_results.append((tool_call.name, result))
+
                 yield AgentEvent.tool_call_complete(
                     tool_call.call_id,
                     tool_call.name,
@@ -151,6 +154,27 @@ class Agent:
                     tool_result.tool_call_id,
                     tool_result.content,
                 )
+
+            invalid_param_errors = []
+            for tool_name, result in raw_tool_results:
+                metadata = result.metadata
+                if isinstance(metadata, dict):
+                    validation_errors = metadata.get("validation_errors")
+                    if validation_errors:
+                        invalid_param_errors.append((tool_name, validation_errors))
+
+            if invalid_param_errors:
+                lines = [
+                    "Tool call failed due to missing or invalid parameters. "
+                    "Please provide the required values and try again:",
+                ]
+                for tool_name, errors in invalid_param_errors:
+                    lines.append(f"- {tool_name}: {'; '.join(errors)}")
+
+                error_message = "\n".join(lines)
+                self.session.context_manager.add_assistant_message(error_message)
+                yield AgentEvent.text_complete(error_message)
+                return
 
             loop_detection_error = self.session.loop_detector.check_for_loop()
             if loop_detection_error:

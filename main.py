@@ -2,6 +2,7 @@ import asyncio
 from pathlib import Path
 import sys
 import click
+from dotenv import load_dotenv
 
 from agent.agent import Agent
 from agent.events import AgentEventType
@@ -62,14 +63,11 @@ class CLI:
         console.print("\n[dim]Goodbye![/dim]")
 
     def _get_tool_kind(self, tool_name: str) -> str | None:
-        tool_kind = None
         tool = self.agent.session.tool_registry.get(tool_name)
         if not tool:
-            tool_kind = None
+            return None
 
-        tool_kind = tool.kind.value
-
-        return tool_kind
+        return tool.kind.value
 
     async def _process_message(self, message: str) -> str | None:
         if not self.agent:
@@ -320,6 +318,7 @@ def main(
     cwd: Path | None,
 ):
     try:
+        load_dotenv()
         config = load_config(cwd=cwd)
     except Exception as e:
         console.print(f"[error]Configuration Error: {e}[/error]")

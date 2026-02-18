@@ -33,24 +33,24 @@ class LLMClient:
             await self._client.close()
             self._client = None
 
-        def _build_tools(self, tools: list[dict[str, Any]]):
-            return [
-                {
-                    "type": "function",
-                    "function": {
-                        "name": tool["name"],
-                        "description": tool.get("description", ""),
-                        "parameters": tool.get(
-                            "parameters",
-                            {
-                                "type": "object",
-                                "properties": {},
-                            },
-                        ),
-                    },
-                }
-                for tool in tools
-            ]
+    def _build_tools(self, tools: list[dict[str, Any]]):
+        return [
+            {
+                "type": "function",
+                "function": {
+                    "name": tool["name"],
+                    "description": tool.get("description", ""),
+                    "parameters": tool.get(
+                        "parameters",
+                        {
+                            "type": "object",
+                            "properties": {},
+                        },
+                    ),
+                },
+            }
+            for tool in tools
+        ]
 
     async def chat_completion(
         self,

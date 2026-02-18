@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 from typing import Any
 
 from platformdirs import user_config_dir, user_data_dir
@@ -76,6 +77,10 @@ def _merge_dicts(base: dict[str, Any], override: dict[str, Any]) -> dict[str, An
 def load_config(cwd: Path | None) -> Config:
     cwd = cwd or Path.cwd()
 
+    env_model = os.environ.get("MODEL")
+    if env_model:
+        env_model = env_model.strip().strip('"').strip("'")
+
     system_path = get_system_config_path()
 
     config_dict: dict[str, Any] = {}
@@ -96,6 +101,12 @@ def load_config(cwd: Path | None) -> Config:
 
     if "cwd" not in config_dict:
         config_dict["cwd"] = cwd
+
+    if env_model:
+        if "model" not in config_dict:
+            config_dict["model"] = {"name": env_model}
+        else:
+            config_dict["model"].setdefault("name", env_model)
 
     if "developer_instructions" not in config_dict:
         agent_md_content = _get_agent_md_files(cwd)
